@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Habit Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: radial-gradient(ellipse at 30% 20%, #b8c8e8 0%, #8fa0ba 100%);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 30px 20px;
+}
+
+/* ── PHONE FRAME ── */
+.phone {
+  width: 393px;
+  background: #f0f2f9;
+  border-radius: 52px;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.55),
+    0 0 0 10px #1a1a2a,
+    0 0 0 11px rgba(255,255,255,0.08),
+    0 50px 120px rgba(0,0,0,0.45);
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+/* notch */
+.notch {
+  position: absolute;
+  top: 0; left: 50%; transform: translateX(-50%);
+  width: 126px; height: 34px;
+  background: #1a1a2a;
+  border-radius: 0 0 22px 22px;
+  z-index: 30;
+}
+
+/* STATUS BAR */
+.status-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 18px 28px 6px;
+  background: #f0f2f9;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 5;
+}
+.status-time { font-size: 15px; font-weight: 700; color: #18192e; letter-spacing: -0.3px; }
+.status-icons { display: flex; align-items: center; gap: 6px; color: #18192e; }
+
+/* SCROLL */
+.screen { flex: 1; overflow-y: auto; padding: 6px 20px 120px; scrollbar-width: none; }
+.screen::-webkit-scrollbar { display: none; }
+
+/* HEADER */
+.header { display: flex; justify-content: space-between; align-items: flex-start; padding: 12px 0 20px; }
+.greeting-name { font-size: 26px; font-weight: 900; color: #18192e; letter-spacing: -0.5px; line-height: 1.15; }
+.greeting-sub { font-size: 13px; color: #888aaa; margin-top: 4px; font-weight: 500; }
+.avatar-ring {
+  width: 52px; height: 52px; border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 2px;
+  box-shadow: 0 4px 14px rgba(102,126,234,0.45);
+  flex-shrink: 0;
+}
+.avatar-inner {
+  width: 100%; height: 100%; border-radius: 50%;
+  background: linear-gradient(135deg, #7c8ef8 0%, #9b59d0 100%);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; font-weight: 800; color: white;
+  border: 2px solid white;
+}
+
+/* STREAK CARD */
+.streak-card {
+  background: white;
+  border-radius: 24px;
+  padding: 18px 20px;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.07), 0 1px 2px rgba(0,0,0,0.04);
+  display: flex; align-items: center; gap: 14px;
+  margin-bottom: 22px;
+}
+.streak-item { display: flex; align-items: center; gap: 10px; }
+.s-icon-wrap {
+  width: 40px; height: 40px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+}
+.s-icon-fire { background: linear-gradient(135deg, #fff3e0, #ffe0b2); }
+.s-icon-trophy { background: linear-gradient(135deg, #f3e5f5, #e1bee7); }
+.s-num { font-size: 26px; font-weight: 900; color: #18192e; line-height: 1; letter-spacing: -1px; }
+.s-label { font-size: 10.5px; color: #adb0c5; margin-top: 2px; font-weight: 500; }
+.s-divider { width: 1px; height: 44px; background: #eef0f8; flex-shrink: 0; }
+.streak-right { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; flex: 1; }
+.days-row, .dots-row { display: flex; gap: 4px; }
+.day-lbl { font-size: 9px; color: #b0b3cc; width: 20px; text-align: center; font-weight: 600; text-transform: uppercase; }
+.dot {
+  width: 20px; height: 20px; border-radius: 50%;
+  background: linear-gradient(135deg, #5b9cf6, #2563eb);
+  box-shadow: 0 2px 6px rgba(59,126,248,0.35);
+}
+.dot.off { background: #eef0f8; box-shadow: none; border: 1.5px solid #e0e3f0; }
+.keep { font-size: 11px; font-weight: 700; color: #3b7ef8; }
+
+/* SECTION HEADER */
+.sec-hdr { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+.sec-title { font-size: 20px; font-weight: 900; color: #18192e; letter-spacing: -0.4px; }
+.add-btn {
+  display: flex; align-items: center; gap: 5px;
+  background: white; border: none; border-radius: 999px;
+  padding: 8px 16px; font-size: 13px; font-weight: 700;
+  color: #3b7ef8; cursor: pointer;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+  font-family: inherit; transition: all 0.18s;
+}
+.add-btn:active { transform: scale(0.97); }
+
+/* SHELF */
+.shelf {
+  border-radius: 28px;
+  padding: 20px 16px 22px;
+  margin-bottom: 20px;
+  position: relative;
+  background: linear-gradient(160deg, #f8f9fe 0%, #edeef7 100%);
+  border: 1px solid rgba(255,255,255,0.9);
+  box-shadow:
+    0 6px 28px rgba(0,0,0,0.07),
+    inset 0 1px 0 rgba(255,255,255,0.8);
+}
+.shelf::before {
+  content: '';
+  position: absolute;
+  bottom: -10px; left: 14px; right: 14px; height: 10px;
+  background: rgba(0,0,0,0.05);
+  border-radius: 0 0 16px 16px;
+  filter: blur(3px);
+}
+/* Shelf surface line */
+.shelf::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0; height: 4px;
+  background: linear-gradient(90deg, transparent, rgba(0,0,0,0.04), transparent);
+  border-radius: 0 0 28px 28px;
+}
+.shelf-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+.shelf-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; max-width: 252px; margin: 0 auto; }
+
+/* HABIT CARD */
+.hcard { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.hname { font-size: 12px; font-weight: 800; color: #18192e; text-align: center; letter-spacing: -0.2px; }
+.hgoal { font-size: 9.5px; color: #adb0c5; text-align: center; font-weight: 500; }
+
+/* PROGRESS GRID */
+.pgrid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 3px; margin-top: 5px; width: 100%; padding: 0 1px; }
+.pcell { height: 11px; border-radius: 3px; }
+.pcell.e { border: 1.5px solid rgba(0,0,0,0.07); background: rgba(0,0,0,0.02); }
+.cb { background: linear-gradient(135deg, #60a5fa, #2563eb); }
+.cg { background: linear-gradient(135deg, #4ade80, #16a34a); }
+.cp { background: linear-gradient(135deg, #f472b6, #db2777); }
+.co { background: linear-gradient(135deg, #fb923c, #ea580c); }
+.cv { background: linear-gradient(135deg, #a78bfa, #7c3aed); }
+
+/* BANNER */
+.banner {
+  background: linear-gradient(135deg, #eef1ff 0%, #e6eaff 100%);
+  border-radius: 22px; padding: 16px 18px;
+  display: flex; align-items: center; gap: 14px;
+  margin: 6px 0 22px; cursor: pointer;
+  border: 1px solid rgba(99,102,241,0.12);
+  box-shadow: 0 4px 16px rgba(99,102,241,0.08);
+}
+.ban-icon {
+  width: 44px; height: 44px; border-radius: 14px;
+  background: white; display: flex; align-items: center; justify-content: center;
+  font-size: 20px; flex-shrink: 0;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+}
+.ban-text { flex: 1; font-size: 13.5px; font-weight: 800; color: #18192e; line-height: 1.45; letter-spacing: -0.2px; }
+.chev {
+  width: 32px; height: 32px; border-radius: 50%; background: white;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+/* PROGRESS CARD */
+.prog-card {
+  background: white; border-radius: 24px; padding: 20px 18px;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.07);
+  display: flex; align-items: center; justify-content: space-around;
+}
+.pi { display: flex; align-items: center; gap: 12px; }
+.pi-num { font-size: 24px; font-weight: 900; color: #18192e; line-height: 1; letter-spacing: -1px; }
+.pi-lbl { font-size: 10px; color: #adb0c5; font-weight: 500; }
+.pdiv { width: 1px; height: 40px; background: #eef0f8; }
+.ring-done {
+  width: 40px; height: 40px; border-radius: 50%;
+  background: linear-gradient(135deg, #3b7ef8, #6366f1);
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 12px rgba(59,126,248,0.4);
+}
+
+/* BOTTOM NAV */
+.bottom-nav {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  background: rgba(255,255,255,0.97);
+  backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(0,0,0,0.05);
+  display: flex; align-items: center;
+  padding: 12px 0 30px; z-index: 20;
+}
+.ni { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; }
+.ni-lbl { font-size: 10px; font-weight: 600; color: #b0b3cc; }
+.home-ind {
+  position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%);
+  width: 120px; height: 4px; background: rgba(0,0,0,0.16); border-radius: 2px;
+}
+.view-all { font-size: 13px; font-weight: 700; color: #3b7ef8; cursor: pointer; }
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="notch"></div>
+
+  <!-- STATUS BAR -->
+  <div class="status-bar">
+    <span class="status-time">9:41</span>
+    <div class="status-icons">
+      <svg width="17" height="12" viewBox="0 0 17 12" fill="currentColor">
+        <rect x="0" y="7" width="3" height="5" rx="0.8"/>
+        <rect x="4" y="5" width="3" height="7" rx="0.8"/>
+        <rect x="8" y="2.5" width="3" height="9.5" rx="0.8"/>
+        <rect x="12" y="0" width="3" height="12" rx="0.8" opacity="0.25"/>
+      </svg>
+      <svg width="16" height="12" viewBox="0 0 20 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+        <path d="M1 5C5.5 0.5 14.5 0.5 19 5" opacity="0.25"/>
+        <path d="M3.5 7.5C6.5 4.5 13.5 4.5 16.5 7.5"/>
+        <path d="M6.5 10.5C8.2 8.8 11.8 8.8 13.5 10.5"/>
+        <circle cx="10" cy="13" r="1.2" fill="currentColor" stroke="none"/>
+      </svg>
+      <svg width="26" height="13" viewBox="0 0 26 13" fill="none">
+        <rect x="0.5" y="0.5" width="21" height="12" rx="3.5" stroke="currentColor" stroke-opacity="0.3"/>
+        <rect x="2" y="2" width="17" height="9" rx="2" fill="currentColor"/>
+        <path d="M23 4.5V8.5C24.2 8 24.2 5 23 4.5Z" fill="currentColor" opacity="0.45"/>
+      </svg>
+    </div>
+  </div>
+
+  <div class="screen">
+
+    <!-- HEADER -->
+    <div class="header">
+      <div>
+        <div class="greeting-name">Good morning, Alex &#x1F44B;</div>
+        <div class="greeting-sub">Build habits. Become your best self.</div>
+      </div>
+      <div class="avatar-ring">
+        <div class="avatar-inner">A</div>
+      </div>
+    </div>
+
+    <!-- STREAK CARD -->
+    <div class="streak-card">
+      <div class="streak-item">
+        <div class="s-icon-wrap s-icon-fire">&#x1F525;</div>
+        <div><div class="s-num">12</div><div class="s-label">Current streak</div></div>
+      </div>
+      <div class="s-divider"></div>
+      <div class="streak-item">
+        <div class="s-icon-wrap s-icon-trophy">&#x1F3C6;</div>
+        <div><div class="s-num" style="color:#7c3aed;">27</div><div class="s-label">Longest streak</div></div>
+      </div>
+      <div class="streak-right">
+        <div class="days-row">
+          <span class="day-lbl">M</span><span class="day-lbl">T</span><span class="day-lbl">W</span>
+          <span class="day-lbl">T</span><span class="day-lbl">F</span><span class="day-lbl">S</span><span class="day-lbl">S</span>
+        </div>
+        <div class="dots-row">
+          <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+          <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+          <div class="dot off"></div>
+        </div>
+        <div class="keep">Keep it going! &#x1F525;</div>
+      </div>
+    </div>
+
+    <!-- HABITS HEADER -->
+    <div class="sec-hdr">
+      <span class="sec-title">Your habits</span>
+      <button class="add-btn">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="12" y1="4" x2="12" y2="20"/><line x1="4" y1="12" x2="20" y2="12"/></svg>
+        Add habit
+      </button>
+    </div>
+
+    <!-- ════════ TOP SHELF ════════ -->
+    <div class="shelf">
+      <div class="shelf-3">
+
+        <!-- JAR: DRINK WATER -->
+        <div class="hcard">
+          <svg width="86" height="112" viewBox="0 0 86 112" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="lidBlue" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#93c5fd"/>
+                <stop offset="50%" stop-color="#3b82f6"/>
+                <stop offset="100%" stop-color="#1d4ed8"/>
+              </linearGradient>
+              <linearGradient id="jarGlassBlue" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#dbeafe" stop-opacity="0.9"/>
+                <stop offset="18%" stop-color="#f0f7ff" stop-opacity="0.95"/>
+                <stop offset="60%" stop-color="#eff6ff" stop-opacity="0.85"/>
+                <stop offset="100%" stop-color="#bfdbfe" stop-opacity="0.8"/>
+              </linearGradient>
+              <linearGradient id="waterBlue" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#7dd3fc"/>
+                <stop offset="40%" stop-color="#3b82f6"/>
+                <stop offset="100%" stop-color="#1e40af"/>
+              </linearGradient>
+              <radialGradient id="waterGlowBlue" cx="50%" cy="20%" r="60%">
+                <stop offset="0%" stop-color="#93c5fd" stop-opacity="0.6"/>
+                <stop offset="100%" stop-color="transparent"/>
+              </radialGradient>
+              <clipPath id="cBlue">
+                <path d="M10 26 Q10 22 15 22 L71 22 Q76 22 76 26 L76 90 Q76 102 43 102 Q10 102 10 90 Z"/>
+              </clipPath>
+              <filter id="dropBlue">
+                <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#3b82f6" flood-opacity="0.25"/>
+              </filter>
+            </defs>
+
+            <!-- LID SHADOW -->
+            <ellipse cx="43" cy="21" rx="26" ry="4" fill="#1d4ed8" opacity="0.15"/>
+            <!-- LID BODY -->
+            <rect x="17" y="5" width="52" height="18" rx="9" fill="url(#lidBlue)" filter="url(#dropBlue)"/>
+            <!-- Lid top shine -->
+            <rect x="21" y="7" width="44" height="6" rx="4" fill="white" opacity="0.3"/>
+            <!-- Lid rim -->
+            <rect x="13" y="19" width="60" height="6" rx="3" fill="#1d4ed8" opacity="0.35"/>
+
+            <!-- JAR BODY -->
+            <path d="M10 26 Q10 22 15 22 L71 22 Q76 22 76 26 L76 90 Q76 102 43 102 Q10 102 10 90 Z"
+              fill="url(#jarGlassBlue)" stroke="#bfdbfe" stroke-width="1.5"/>
+
+            <!-- WATER FILL -->
+            <g clip-path="url(#cBlue)">
+              <!-- Main water body -->
+              <rect x="10" y="38" width="66" height="64" fill="url(#waterBlue)"/>
+              <!-- Water glow -->
+              <rect x="10" y="38" width="66" height="30" fill="url(#waterGlowBlue)"/>
+              <!-- Wave surface - layer 1 -->
+              <path fill="#60a5fa" opacity="0.95">
+                <animate attributeName="d" dur="3.2s" repeatCount="indefinite"
+                  values="
+                    M10,38 C20,33 30,43 43,38 C56,33 66,43 76,38 L76,52 L10,52 Z;
+                    M10,38 C20,43 30,33 43,38 C56,43 66,33 76,38 L76,52 L10,52 Z;
+                    M10,38 C20,33 30,43 43,38 C56,33 66,43 76,38 L76,52 L10,52 Z"/>
+              </path>
+              <!-- Wave surface - layer 2 (lighter, offset) -->
+              <path fill="white" opacity="0.18">
+                <animate attributeName="d" dur="2.4s" repeatCount="indefinite" begin="0.6s"
+                  values="
+                    M10,36 C22,42 34,30 43,36 C52,42 64,30 76,36 L76,46 L10,46 Z;
+                    M10,40 C22,34 34,46 43,40 C52,34 64,46 76,40 L76,50 L10,50 Z;
+                    M10,36 C22,42 34,30 43,36 C52,42 64,30 76,36 L76,46 L10,46 Z"/>
+              </path>
+              <!-- Bubbles -->
+              <circle r="2.2" fill="white" opacity="0.35" cx="24">
+                <animate attributeName="cy" values="95;42" dur="3s" repeatCount="indefinite"/>
+                <animate attributeName="opacity" values="0.35;0" dur="3s" repeatCount="indefinite"/>
+              </circle>
+              <circle r="1.5" fill="white" opacity="0.28" cx="55">
+                <animate attributeName="cy" values="88;44" dur="2.4s" repeatCount="indefinite" begin="0.9s"/>
+                <animate attributeName="opacity" values="0.28;0" dur="2.4s" repeatCount="indefinite" begin="0.9s"/>
+              </circle>
+              <circle r="1" fill="white" opacity="0.22" cx="38">
+                <animate attributeName="cy" values="98;50" dur="3.8s" repeatCount="indefinite" begin="0.3s"/>
+                <animate attributeName="opacity" values="0.22;0" dur="3.8s" repeatCount="indefinite" begin="0.3s"/>
+              </circle>
+              <circle r="1.8" fill="white" opacity="0.2" cx="62">
+                <animate attributeName="cy" values="80;40" dur="2.8s" repeatCount="indefinite" begin="1.4s"/>
+                <animate attributeName="opacity" values="0.2;0" dur="2.8s" repeatCount="indefinite" begin="1.4s"/>
+              </circle>
+            </g>
+
+            <!-- GLASS REFLECTIONS -->
+            <path d="M17 28 Q13 46 13 68 Q13 82 15 92" stroke="white" stroke-width="5" stroke-linecap="round" opacity="0.45"/>
+            <path d="M22 26 Q19 38 19 54" stroke="white" stroke-width="2.5" stroke-linecap="round" opacity="0.25"/>
+            <!-- Right edge shadow -->
+            <path d="M72 28 Q75 46 75 68 Q75 82 73 92" stroke="#bfdbfe" stroke-width="3" stroke-linecap="round" opacity="0.5"/>
+
+            <!-- LABEL BADGE -->
+            <rect x="16" y="87" width="54" height="14" rx="7" fill="#1d4ed8" opacity="0.12"/>
+            <rect x="17" y="88" width="52" height="12" rx="6" fill="#dbeafe"/>
+            <text x="43" y="97.5" text-anchor="middle" font-size="7.5" font-weight="800" fill="#1e40af" font-family="Inter,sans-serif" letter-spacing="0.3">Health</text>
+
+            <!-- EMOJI -->
+            <text x="43" y="64" text-anchor="middle" font-size="22">&#x1F4A7;</text>
+          </svg>
+          <div class="hname">Drink Water</div>
+          <div class="hgoal">Goal: 8 glasses</div>
+          <div class="pgrid">
+            <div class="pcell cb"></div><div class="pcell cb"></div><div class="pcell cb"></div><div class="pcell cb"></div><div class="pcell cb"></div>
+            <div class="pcell cb"></div><div class="pcell cb"></div><div class="pcell cb"></div><div class="pcell cb"></div><div class="pcell cb"></div>
+            <div class="pcell cb"></div><div class="pcell cb"></div><div class="pcell cb"></div><div class="pcell e"></div><div class="pcell e"></div>
+          </div>
+        </div>
+
+        <!-- JAR: WORKOUT -->
+        <div class="hcard">
+          <svg width="86" height="112" viewBox="0 0 86 112" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="lidGreen" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#86efac"/><stop offset="50%" stop-color="#22c55e"/><stop offset="100%" stop-color="#15803d"/>
+              </linearGradient>
+              <linearGradient id="jarGlassGreen" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#dcfce7" stop-opacity="0.9"/><stop offset="18%" stop-color="#f0fdf4" stop-opacity="0.95"/>
+                <stop offset="60%" stop-color="#f0fdf4" stop-opacity="0.85"/><stop offset="100%" stop-color="#bbf7d0" stop-opacity="0.8"/>
+              </linearGradient>
+              <linearGradient id="waterGreen" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#86efac"/><stop offset="40%" stop-color="#22c55e"/><stop offset="100%" stop-color="#14532d"/>
+              </linearGradient>
+              <clipPath id="cGreen">
+                <path d="M10 26 Q10 22 15 22 L71 22 Q76 22 76 26 L76 90 Q76 102 43 102 Q10 102 10 90 Z"/>
+              </clipPath>
+              <filter id="dropGreen">
+                <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#22c55e" flood-opacity="0.25"/>
+              </filter>
+            </defs>
+            <ellipse cx="43" cy="21" rx="26" ry="4" fill="#15803d" opacity="0.15"/>
+            <rect x="17" y="5" width="52" height="18" rx="9" fill="url(#lidGreen)" filter="url(#dropGreen)"/>
+            <rect x="21" y="7" width="44" height="6" rx="4" fill="white" opacity="0.3"/>
+            <rect x="13" y="19" width="60" height="6" rx="3" fill="#15803d" opacity="0.3"/>
+            <path d="M10 26 Q10 22 15 22 L71 22 Q76 22 76 26 L76 90 Q76 102 43 102 Q10 102 10 90 Z" fill="url(#jarGlassGreen)" stroke="#bbf7d0" stroke-width="1.5"/>
+            <g clip-path="url(#cGreen)">
+              <!-- ~55% fill -->
+              <rect x="10" y="54" width="66" height="48" fill="url(#waterGreen)"/>
+              <path fill="#4ade80" opacity="0.9">
+                <animate attributeName="d" dur="3s" repeatCount="indefinite"
+                  values="M10,54 C20,49 30,59 43,54 C56,49 66,59 76,54 L76,68 L10,68 Z;
+                          M10,54 C20,59 30,49 43,54 C56,59 66,49 76,54 L76,68 L10,68 Z;
+                          M10,54 C20,49 30,59 43,54 C56,49 66,59 76,54 L76,68 L10,68 Z"/>
+              </path>
+              <path fill="white" opacity="0.18">
+                <animate attributeName="d" dur="2.3s" repeatCount="indefinite" begin="0.5s"
+                  values="M10,52 C22,58 34,46 43,52 C52,58 64,46 76,52 L76,62 L10,62 Z;
+                          M10,56 C22,50 34,62 43,56 C52,50 64,62 76,56 L76,66 L10,66 Z;
+                          M10,52 C22,58 34,46 43,52 C52,58 64,46 76,52 L76,62 L10,62 Z"/>
+              </path>
+            </g>
+            <path d="M17 28 Q13 46 13 68 Q13 82 15 92" stroke="white" stroke-width="5" stroke-linecap="round" opacity="0.45"/>
+            <path d="M22 26 Q19 38 19 54" stroke="white" stroke-width="2.5" stroke-linecap="round" opacity="0.25"/>
+            <path d="M72 28 Q75 46 75 68 Q75 82 73 92" stroke="#bbf7d0" stroke-width="3" stroke-linecap="round" opacity="0.5"/>
+            <rect x="16" y="87" width="54" height="14" rx="7" fill="#15803d" opacity="0.12"/>
+            <rect x="17" y="88" width="52" height="12" rx="6" fill="#dcfce7"/>
+            <text x="43" y="97.5" text-anchor="middle" font-size="7.5" font-weight="800" fill="#14532d" font-family="Inter,sans-serif" letter-spacing="0.3">Fitness</text>
+            <text x="43" y="50" text-anchor="middle" font-size="22">&#x1F3CB;&#xFE0F;</text>
+          </svg>
+          <div class="hname">Workout</div>
+          <div class="hgoal">Goal: 4 times/week</div>
+          <div class="pgrid">
+            <div class="pcell cg"></div><div class="pcell cg"></div><div class="pcell cg"></div><div class="pcell cg"></div><div class="pcell cg"></div>
+            <div class="pcell cg"></div><div class="pcell cg"></div><div class="pcell cg"></div><div class="pcell e"></div><div class="pcell e"></div>
+            <div class="pcell e"></div><div class="pcell e"></div><div class="pcell e"></div><div class="pcell e"></div><div class="pcell e"></div>
+          </div>
+        </div>
+
+        <!-- JAR: MEDITATE -->
+        <div class="hcard">
+          <svg width="86" height="112" viewBox="0 0 86 112" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="lidPink" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#f9a8d4"/><stop offset="50%" stop-color="#ec4899"/><stop offset="100%" stop-color="#9d174d"/>
+              </linearGradient>
+              <linearGradient id="jarGlassPink" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#fce7f3" stop-opacity="0.9"/><stop offset="18%" stop-color="#fdf2f8" stop-opacity="0.95"/>
+                <stop offset="60%" stop-color="#fdf2f8" stop-opacity="0.85"/><stop offset="100%" stop-color="#fbcfe8" stop-opacity="0.8"/>
+              </linearGradient>
+              <linearGradient id="waterPink" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#f9a8d4"/><stop offset="40%" stop-color="#ec4899"/><stop offset="100%" stop-color="#831843"/>
+              </linearGradient>
+              <clipPath id="cPink">
+                <path d="M10 26 Q10 22 15 22 L71 22 Q76 22 76 26 L76 90 Q76 102 43 102 Q10 102 10 90 Z"/>
+              </clipPath>
+              <filter id="dropPink">
+                <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#ec4899" flood-opacity="0.25"/>
+              </filter>
+            </defs>
+            <ellipse cx="43" cy="21" rx="26" ry="4" fill="#9d174d" opacity="0.15"/>
+            <rect x="17" y="5" width="52" height="18" rx="9" fill="url(#lidPink)" filter="url(#dropPink)"/>
+            <rect x="21" y="7" width="44" height="6" rx="4" fill="white" opacity="0.3"/>
+            <rect x="13" y="19" width="60" height="6" rx="3" fill="#9d174d" opacity="0.3"/>
+            <path d="M10 26 Q10 22 15 22 L71 22 Q76 22 76 26 L76 90 Q76 102 43 102 Q10 102 10 90 Z" fill="url(#jarGlassPink)" stroke="#fbcfe8" stroke-width="1.5"/>
+            <g clip-path="url(#cPink)">
+              <!-- ~45% fill -->
+              <rect x="10" y="62" width="66" height="40" fill="url(#waterPink)"/>
+              <path fill="#f472b6" opacity="0.9">
+                <animate attributeName="d" dur="3.4s" repeatCount="indefinite"
+                  values="M10,62 C20,57 30,67 43,62 C56,57 66,67 76,62 L76,76 L10,76 Z;
+                          M10,62 C20,67 30,57 43,62 C56,67 66,57 76,62 L76,76 L10,76 Z;
+                          M10,62 C20,57 30,67 43,62 C56,57 66,67 76,62 L76,76 L10,76 Z"/>
+              </path>
+              <path fill="white" opacity="0.18">
+                <animate attributeName="d" dur="2.6s" repeatCount="indefinite" begin="0.7s"
+                  values="M10,60 C22,66 34,54 43,60 C52,66 64,54 76,60 L76,70 L10,70 Z;
+                          M10,64 C22,58 34,70 43,64 C52,58 64,70 76,64 L76,74 L10,74 Z;
+                          M10,60 C22,66 34,54 43,60 C52,66 64,54 76,60 L76,70 L10,70 Z"/>
+              </path>
+            </g>
+            <path d="M17 28 Q13 46 13 68 Q13 82 15 92" stroke="white" stroke-width="5" stroke-linecap="round" opacity="0.45"/>
+            <path d="M22 26 Q19 38 19 54" stroke="white" stroke-width="2.5" stroke-linecap="round" opacity="0.25"/>
+            <path d="M72 28 Q75 46 75 68 Q75 82 73 92" stroke="#fbcfe8" stroke-width="3" stroke-linecap="round" opacity="0.5"/>
+            <rect x="16" y="87" width="54" height="14" rx="7" fill="#9d174d" opacity="0.1"/>
+            <rect x="17" y="88" width="52" height="12" rx="6" fill="#fce7f3"/>
+            <text x="43" y="97.5" text-anchor="middle" font-size="7.5" font-weight="800" fill="#9d174d" font-family="Inter,sans-serif" letter-spacing="0.3">Mind</text>
+            <text x="43" y="56" text-anchor="middle" font-size="22">&#x1F9D8;</text>
+          </svg>
+          <div class="hname">Meditate</div>
+          <div class="hgoal">Goal: 10 mins</div>
+          <div class="pgrid">
+            <div class="pcell cp"></div><div class="pcell cp"></div><div class="pcell cp"></div><div class="pcell cp"></div><div class="pcell cp"></div>
+            <div class="pcell cp"></div><div class="pcell cp"></div><div class="pcell e"></div><div class="pcell e"></div><div class="pcell e"></div>
+            <div class="pcell e"></div><div class="pcell e"></div><div class="pcell e"></div><div class="pcell e"></div><div class="pcell e"></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ════════ BOTTOM SHELF ════════ -->
+    <div class="shelf">
+      <div class="shelf-2">
+
+        <!-- JAR: READ -->
+        <div class="hcard">
+          <svg width="86" height="112" viewBox="0 0 86 112" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="lidOrange" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#fdba74"/><stop offset="50%" stop-color="#f97316"/><stop offset="100%" stop-color="#9a3412"/>
+              </linearGradient>
+              <linearGradient id="jarGlassOrange" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#ffedd5" stop-opacity="0.9"/><stop offset="18%" stop-color="#fff7ed" stop-opacity="0.95"/>
+                <stop offset="60%" stop-color="#fff7ed" stop-opacity="0.85"/><stop offset="100%" stop-color="#fed7aa" stop-opacity="0.8"/>
+              </linearGradient>
+              <linearGradient id="waterOrange" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#fdba74"/><stop offset="40%" stop-color="#f97316"/><stop offset="100%" stop-color="#7c2d12"/>
+              </linearGradient>
+              <clipPath id="cOrange">
+                <path d="M10 26 Q10 22 15 22 L71 22 Q76 22 76 26 L76 90 Q76 102 43 102 Q10 102 10 90 Z"/>
+              </clipPath>
+              <filter id="dropOrange">
+                <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#f97316" flood-opacity="0.25"/>
+              </filter>
+            </defs>
+            <ellipse cx="43" cy="21" rx="26" ry="4" fill="#9a3412" opacity="0.15"/>
+            <rect x="17" y="5" width="52" height="18" rx="9" fill="url(#lidOrange)" filter="url(#dropOrange)"/>
+            <rect x="21" y="7" width="44" height="6" rx="4" fill="white" opacity="0.3"/>
+            <rect x="13" y="19" width="60" height="6" rx="3" fill="#9a3412" opacity="0.28"/>
+            <path d="M10 26 Q10 22 15 22 L71 22 Q76 22 76 26 L76 90 Q76 102 43 102 Q10 102 10 90 Z" fill="url(#jarGlassOrange)" stroke="#fed7aa" stroke-width="1.5"/>
+            <g clip-path="url(#cOrange)">
+              <!-- ~50% fill -->
+              <rect x="10" y="58" width="66" height="44" fill="url(#waterOrange)"/>
+              <path fill="#fb923c" opacity="0.9">
+                <animate attributeName="d" dur="2.9s" repeatCount="indefinite"
+                  values="M10,58 C20,53 30,63 43,58 C56,53 66,63 76,58 L76,72 L10,72 Z;
+                          M10,58 C20,63 30,53 43,58 C56,63 66,53 76,58 L76,72 L10,72 Z;
+                          M10,58 C20,53 30,63 43,58 C56,53 66,63 76,58 L76,72 L10,72 Z"/>
+              </path>
+              <path fill="white" opacity="0.18">
+                <animate attributeName="d" dur="2.2s" repeatCount="indefinite" begin="0.4s"
+                  values="M10,56 C22,62 34,50 43,56 C52,62 64,50 76,56 L76,66 L10,66 Z;
+                          M10,60 C22,54 34,66 43,60 C52,54 64,66 76,60 L76,70 L10,70 Z;
+                          M10,56 C22,62 34,50 43,56 C52,62 64,50 76,56 L76,66 L10,66 Z"/>
+              </path>
+            </g>
+            <path d="M17 28 Q13 46 13 68 Q13 82 15 92" stroke="white" stroke-width="5" stroke-linecap="round" opacity="0.45"/>
+            <path d="M22 26 Q19 38 19 54" stroke="white" stroke-width="2.5" stroke-linecap="round" opacity="0.25"/>
+            <path d="M72 28 Q75 46 75 68 Q75 82 73 92" stroke="#fed7aa" stroke-width="3" stroke-linecap="round" opacity="0.5"/>
+            <rect x="16" y="87" width="54" height="14" rx="7" fill="#9a3412" opacity="0.1"/>
+            <rect x="17" y="88" width="52" height="12" rx="6" fill="#ffedd5"/>
+            <text x="43" y="97.5" text-anchor="middle" font-size="7.5" font-weight="800" fill="#9a3412" font-family="Inter,sans-serif" letter-spacing="0.3">Learning</text>
+            <text x="43" y="54" text-anchor="middle" font-size="22">&#x1F4D6;</text>
+          </svg>
+          <div class="hname">Read</div>
+          <div class="hgoal">Goal: 20 mins</div>
+          <div class="pgrid">
+            <div class="pcell co"></div><div class="pcell co"></div><div class="pcell co"></div><div class="pcell co"></div><div class="pcell co"></div>
+            <div class="pcell co"></div><div class="pcell co"></div><div class="pcell e"></div><div class="pcell e"></div><div class="pcell e"></div>
+            <div class="pcell e"></div><div class="pcell e"></div><div class="pcell e"></div><div class="pcell e"></div><div class="pcell e"></div>
+          </div>
+        </div>
+
+        <!-- JAR: NO ALCOHOL -->
+        <div class="hcard">
+          <svg width="86" height="112" viewBox="0 0 86 112" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="lidPurple" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#c4b5fd"/><stop offset="50%" stop-color="#8b5cf6"/><stop offset="100%" stop-color="#4c1d95"/>
+              </linearGradient>
+              <linearGradient id="jarGlassPurple" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#ede9fe" stop-opacity="0.9"/><stop offset="18%" stop-color="#f5f3ff" stop-opacity="0.95"/>
+                <stop offset="60%" stop-color="#f5f3ff" stop-opacity="0.85"/><stop offset="100%" stop-color="#ddd6fe" stop-opacity="0.8"/>
+              </linearGradient>
+              <linearGradient id="waterPurple" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#c4b5fd"/><stop offset="40%" stop-color="#8b5cf6"/><stop offset="100%" stop-color="#3b0764"/>
+              </linearGradient>
+              <clipPath id="cPurple">
+                <path d="M10 26 Q10 22 15 22 L71 22 Q76 22 76 26 L76 90 Q76 102 43 102 Q10 102 10 90 Z"/>
+              </clipPath>
+              <filter id="dropPurple">
+                <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#8b5cf6" flood-opacity="0.25"/>
+              </filter>
+            </defs>
+            <ellipse cx="43" cy="21" rx="26" ry="4" fill="#4c1d95" opacity="0.15"/>
+            <rect x="17" y="5" width="52" height="18" rx="9" fill="url(#lidPurple)" filter="url(#dropPurple)"/>
+            <rect x="21" y="7" width="44" height="6" rx="4" fill="white" opacity="0.3"/>
+            <rect x="13" y="19" width="60" height="6" rx="3" fill="#4c1d95" opacity="0.28"/>
+            <path d="M10 26 Q10 22 15 22 L71 22 Q76 22 76 26 L76 90 Q76 102 43 102 Q10 102 10 90 Z" fill="url(#jarGlassPurple)" stroke="#ddd6fe" stroke-width="1.5"/>
+            <g clip-path="url(#cPurple)">
+              <!-- ~65% fill -->
+              <rect x="10" y="44" width="66" height="58" fill="url(#waterPurple)"/>
+              <path fill="#a78bfa" opacity="0.9">
+                <animate attributeName="d" dur="2.7s" repeatCount="indefinite"
+                  values="M10,44 C20,39 30,49 43,44 C56,39 66,49 76,44 L76,58 L10,58 Z;
+                          M10,44 C20,49 30,39 43,44 C56,49 66,39 76,44 L76,58 L10,58 Z;
+                          M10,44 C20,39 30,49 43,44 C56,39 66,49 76,44 L76,58 L10,58 Z"/>
+              </path>
+              <path fill="white" opacity="0.18">
+                <animate attributeName="d" dur="2.1s" repeatCount="indefinite" begin="0.8s"
+                  values="M10,42 C22,48 34,36 43,42 C52,48 64,36 76,42 L76,52 L10,52 Z;
+                          M10,46 C22,40 34,52 43,46 C52,40 64,52 76,46 L76,56 L10,56 Z;
+                          M10,42 C22,48 34,36 43,42 C52,48 64,36 76,42 L76,52 L10,52 Z"/>
+              </path>
+              <circle r="2" fill="white" opacity="0.3" cx="30">
+                <animate attributeName="cy" values="90;46" dur="2.6s" repeatCount="indefinite"/>
+                <animate attributeName="opacity" values="0.3;0" dur="2.6s" repeatCount="indefinite"/>
+              </circle>
+              <circle r="1.4" fill="white" opacity="0.22" cx="57">
+                <animate attributeName="cy" values="80;46" dur="3.2s" repeatCount="indefinite" begin="1s"/>
+                <animate attributeName="opacity" values="0.22;0" dur="3.2s" repeatCount="indefinite" begin="1s"/>
+              </circle>
+            </g>
+            <path d="M17 28 Q13 46 13 68 Q13 82 15 92" stroke="white" stroke-width="5" stroke-linecap="round" opacity="0.45"/>
+            <path d="M22 26 Q19 38 19 54" stroke="white" stroke-width="2.5" stroke-linecap="round" opacity="0.25"/>
+            <path d="M72 28 Q75 46 75 68 Q75 82 73 92" stroke="#ddd6fe" stroke-width="3" stroke-linecap="round" opacity="0.5"/>
+            <rect x="16" y="87" width="54" height="14" rx="7" fill="#4c1d95" opacity="0.1"/>
+            <rect x="17" y="88" width="52" height="12" rx="6" fill="#ede9fe"/>
+            <text x="43" y="97.5" text-anchor="middle" font-size="7.5" font-weight="800" fill="#4c1d95" font-family="Inter,sans-serif" letter-spacing="0.3">Lifestyle</text>
+            <text x="43" y="40" text-anchor="middle" font-size="22">&#x1F6AB;</text>
+          </svg>
+          <div class="hname">No Alcohol</div>
+          <div class="hgoal">Goal: Stay clean</div>
+          <div class="pgrid">
+            <div class="pcell cv"></div><div class="pcell cv"></div><div class="pcell cv"></div><div class="pcell cv"></div><div class="pcell cv"></div>
+            <div class="pcell cv"></div><div class="pcell cv"></div><div class="pcell cv"></div><div class="pcell cv"></div><div class="pcell cv"></div>
+            <div class="pcell e"></div><div class="pcell e"></div><div class="pcell e"></div><div class="pcell e"></div><div class="pcell e"></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- BANNER -->
+    <div class="banner">
+      <div class="ban-icon">&#x2728;</div>
+      <div class="ban-text">Small habits today,<br>extraordinary life tomorrow.</div>
+      <div class="chev">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9ea1b2" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="9 18 15 12 9 6"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- TODAY'S PROGRESS -->
+    <div class="sec-hdr">
+      <span class="sec-title">Today's progress</span>
+      <span class="view-all">View all</span>
+    </div>
+    <div class="prog-card">
+      <div class="pi">
+        <div class="ring-done">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+        </div>
+        <div><div class="pi-num">4</div><div class="pi-lbl">Completed</div></div>
+      </div>
+      <div class="pdiv"></div>
+      <div class="pi">
+        <div style="width:40px;height:40px;border-radius:50%;background:conic-gradient(#fb923c 270deg,#eef0f8 270deg);display:flex;align-items:center;justify-content:center;box-shadow:0 3px 10px rgba(251,146,60,0.3)">
+          <div style="width:29px;height:29px;border-radius:50%;background:white;"></div>
+        </div>
+        <div><div class="pi-num">1</div><div class="pi-lbl">In progress</div></div>
+      </div>
+      <div class="pdiv"></div>
+      <div class="pi">
+        <div style="width:40px;height:40px;border-radius:50%;background:#eef0f8;border:2.5px solid #e0e3f0;display:flex;align-items:center;justify-content:center;">
+          <div style="width:28px;height:28px;border-radius:50%;background:white;"></div>
+        </div>
+        <div><div class="pi-num">2</div><div class="pi-lbl">Remaining</div></div>
+      </div>
+    </div>
+
+  </div><!-- /screen -->
+
+  <!-- BOTTOM NAV -->
+  <div class="bottom-nav">
+    <div class="ni">
+      <svg width="23" height="23" viewBox="0 0 24 24" fill="#3b7ef8"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+      <span class="ni-lbl" style="color:#3b7ef8;">Home</span>
+    </div>
+    <div class="ni">
+      <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="#b0b3cc" stroke-width="1.8" stroke-linecap="round">
+        <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>
+      </svg>
+      <span class="ni-lbl">Stats</span>
+    </div>
+    <div class="ni">
+      <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="#b0b3cc" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="3"/>
+        <path d="M12 1v3M12 20v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M1 12h3M20 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/>
+      </svg>
+      <span class="ni-lbl">Insights</span>
+    </div>
+    <div class="ni">
+      <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="#b0b3cc" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="3"/>
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+      </svg>
+      <span class="ni-lbl">Settings</span>
+    </div>
+  </div>
+  <div class="home-ind"></div>
+
+</div>
+</body>
+</html>
