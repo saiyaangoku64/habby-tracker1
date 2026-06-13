@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Habbby — a habit tracker you'll actually keep open</title>
+<meta name="description" content="Habbby turns each habit into a glass jar that fills as you log progress, with collectible cards and streak flames. Coming soon to iOS." />
+<meta property="og:title" content="Habbby — coming soon to iOS" />
+<meta property="og:description" content="Jars fill. Streaks grow. Cards unlock." />
+<meta name="theme-color" content="#6d28d9" />
+<link rel="icon" type="image/png" href="assets/icon.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Instrument+Serif:ital@0;1&family=Caveat:wght@400;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="style.css" />
+
+<!-- shared inline SVG icon defs -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-drop" viewBox="0 0 24 24"><path d="M12 3c-3.5 4-7 8-7 12a7 7 0 0014 0c0-4-3.5-8-7-12z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 5a2 2 0 012-2h12v16H6a2 2 0 00-2 2zM4 19h14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-sunrise" viewBox="0 0 24 24"><path d="M3 18h18M6 14a6 6 0 0112 0M12 4v3M5 7l2 2M19 7l-2 2M2 21h20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+    <symbol id="i-flame" viewBox="0 0 24 24"><path d="M12 3s5 5 5 10a5 5 0 11-10 0c0-2 1-4 2-5 0 2 1 3 2 3 0-3 1-6 1-8z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M4 12l5 5L20 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 2l2 7 7 2-7 2-2 7-2-7-7-2 7-2z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></symbol>
+    <symbol id="i-medal" viewBox="0 0 24 24"><path d="M8 3l4 8 4-8M7 13a5 5 0 1010 0 5 5 0 00-10 0z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M8 11V7a4 4 0 018 0v4" fill="none" stroke="currentColor" stroke-width="1.8"/></symbol>
+    <symbol id="i-apple" viewBox="0 0 24 24"><path fill="currentColor" d="M17.05 12.04c-.03-2.79 2.28-4.13 2.38-4.2-1.3-1.9-3.32-2.16-4.04-2.19-1.72-.17-3.36 1.01-4.23 1.01-.88 0-2.22-.99-3.66-.96-1.88.03-3.62 1.09-4.59 2.78-1.95 3.4-.5 8.42 1.41 11.18.93 1.35 2.04 2.86 3.49 2.81 1.4-.06 1.93-.91 3.62-.91 1.69 0 2.17.91 3.66.88 1.51-.03 2.46-1.37 3.39-2.73 1.07-1.57 1.51-3.09 1.54-3.17-.03-.01-2.95-1.13-2.97-4.5zM14.4 4.13c.77-.94 1.29-2.24 1.15-3.54-1.11.05-2.46.74-3.26 1.67-.71.83-1.34 2.16-1.18 3.43 1.24.1 2.51-.63 3.29-1.56z"/></symbol>
+    <symbol id="i-arrow-r" viewBox="0 0 24 24"><path d="M5 12h14M13 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-arrow-l" viewBox="0 0 24 24"><path d="M19 12H5M11 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  </defs>
+</svg>
+</head>
+<body>
+
+<!-- ============== NAV ============== -->
+<header class="nav">
+  <a class="nav-brand" href="#top" aria-label="Habbby home">
+    <span class="nav-logo">habbby</span>
+    <img class="nav-mascot" src="assets/mascot-happy.png" alt="" />
+  </a>
+  <nav class="nav-links" aria-label="Main">
+    <a href="#how">How it works</a>
+    <a href="#cards">Cards</a>
+    <a href="#science">The science</a>
+    <a href="#faq">FAQ</a>
+  </nav>
+  <a class="nav-cta" href="#download">Coming to iOS <svg class="ic-12"><use href="#i-arrow-r"/></svg></a>
+</header>
+
+<!-- ============== HERO ============== -->
+<section id="top" class="hero">
+  <span class="status-badge"><span class="status-dot"></span> In development · iOS · Summer 2026</span>
+
+  <h1 class="hero-headline">A habit tracker<br/>you'll actually keep open.</h1>
+  <p class="hero-sub">
+    Each habit is a glass jar that fills as you log progress.
+    Skip a day and it cracks. Show up for a week and a hand-painted card joins your collection.
+  </p>
+
+  <!-- carousel -->
+  <div class="carousel" id="carousel">
+    <button class="car-arrow car-prev" id="car-prev" aria-label="Previous screen">
+      <svg class="ic-20"><use href="#i-arrow-l"/></svg>
+    </button>
+
+    <div class="car-stage">
+      <div class="phone hero-phone">
+        <div class="phone-shell">
+          <div class="phone-notch"></div>
+          <img class="phone-screen car-img" id="car-img" src="assets/screen-home.png" alt="Habbby home screen" />
+        </div>
+      </div>
+    </div>
+
+    <button class="car-arrow car-next" id="car-next" aria-label="Next screen">
+      <svg class="ic-20"><use href="#i-arrow-r"/></svg>
+    </button>
+  </div>
+
+  <div class="car-meta">
+    <span class="car-label" id="car-label">Home · your daily streak</span>
+    <div class="car-dots" id="car-dots" role="tablist" aria-label="Screen selector"></div>
+  </div>
+
+  <div class="hero-cta" id="download">
+    <a class="appstore-badge" href="#" aria-label="Coming soon to the App Store">
+      <svg class="appstore-glyph"><use href="#i-apple"/></svg>
+      <span class="appstore-copy">
+        <span class="appstore-eyebrow">Coming soon to the</span>
+        <span class="appstore-store">App Store</span>
+      </span>
+    </a>
+    <p class="hero-meta">
+      <svg class="ic-12"><use href="#i-spark"/></svg>
+      <span>Built for iPhone · No ads · No tracking</span>
+    </p>
+  </div>
+</section>
+
+<!-- ============== STATS STRIP ============== -->
+<section class="stats-strip">
+  <div class="stat" data-reveal="up" data-reveal-delay="1"><span class="stat-num" data-num="66">66</span><span class="stat-lbl">days to automate a behaviour <em>(Lally et al., 2010)</em></span></div>
+  <div class="stat" data-reveal="up" data-reveal-delay="2"><span class="stat-num" data-num="2" data-suffix="×">2×</span><span class="stat-lbl">retention from variable rewards <em>(Skinner, 1957)</em></span></div>
+  <div class="stat" data-reveal="up" data-reveal-delay="3"><span class="stat-num" data-num="32" data-suffix="+">32+</span><span class="stat-lbl">cards in the collection · rares & legendaries on the way</span></div>
+  <div class="stat" data-reveal="up" data-reveal-delay="4"><span class="stat-num" data-num="0">0</span><span class="stat-lbl">ads · trackers · paywalled core features</span></div>
+</section>
+
+<!-- ============== HOW IT WORKS ============== -->
+<section id="how" class="features">
+  <header class="section-head" data-reveal="up">
+    <span class="eyebrow">How Habbby works</span>
+    <h3>Four small loops, one big habit.</h3>
+  </header>
+
+  <div class="feature-grid">
+
+    <article class="feature" data-reveal="up">
+      <div class="feat-crop">
+        <img class="crop-img" src="assets/screen-home.png" alt="A 5-day streak with green check days" />
+      </div>
+      <div class="feature-copy">
+        <span class="feat-num">01 · Streak</span>
+        <h4>A streak with a heartbeat.</h4>
+        <p>Six animated tiers, two streak-freezes a month, green check days for every win. Loss-aversion does the work; you do the habit.</p>
+      </div>
+      <span class="feat-sketch sk-streak" aria-hidden="true">
+        <span class="sk-text">streak fire</span>
+        <svg class="sk-arrow" viewBox="0 0 90 60">
+          <path d="M82 8 C 60 18, 36 28, 12 44" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M22 38 L 10 46 L 20 52" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </span>
+    </article>
+
+    <article class="feature reverse" data-reveal="up" data-reveal-delay="1">
+      <div class="feat-crop">
+        <img class="crop-img" src="assets/screen-jars.png" alt="Today's jars filling up" />
+      </div>
+      <div class="feature-copy">
+        <span class="feat-num">02 · Jars</span>
+        <h4>Habits live in jars.</h4>
+        <p>Each habit is a glass jar with a moving water-line. Log progress and the level rises. Skip a day and the glass starts to crack.</p>
+      </div>
+      <span class="feat-sketch sk-jars" aria-hidden="true">
+        <svg class="sk-arrow" viewBox="0 0 90 60">
+          <path d="M8 8 C 30 18, 54 28, 78 44" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M68 38 L 80 46 L 70 52" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span class="sk-text">jar fills up</span>
+      </span>
+    </article>
+
+    <article class="feature" data-reveal="up" data-reveal-delay="2">
+      <div class="feat-crop">
+        <img class="crop-img" src="assets/screen-cards.png" alt="The card collection grid" />
+      </div>
+      <div class="feature-copy">
+        <span class="feat-num">03 · Cards</span>
+        <h4>Milestones unlock cards.</h4>
+        <p>Hand-painted pixel-art cards appear when you hit a milestone. Each one stays locked until you've earned it. The variable-reward schedule that powers card games, pointed at your morning run.</p>
+      </div>
+      <span class="feat-sketch sk-cards" aria-hidden="true">
+        <span class="sk-text">collect 'em all</span>
+        <svg class="sk-arrow" viewBox="0 0 90 60">
+          <path d="M82 8 C 60 18, 36 28, 12 44" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M22 38 L 10 46 L 20 52" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </span>
+    </article>
+
+    <article class="feature reverse" data-reveal="up" data-reveal-delay="3">
+      <div class="feat-crop">
+        <img class="crop-img" src="assets/screen-ranks.png" alt="Weekly leaderboard podium" />
+      </div>
+      <div class="feature-copy">
+        <span class="feat-num">04 · Ranks</span>
+        <h4>A friendly weekly podium.</h4>
+        <p>Gold, silver, bronze and a global rankings list that resets every Monday. No followers. No algorithm. Just the table.</p>
+      </div>
+      <span class="feat-sketch sk-ranks" aria-hidden="true">
+        <svg class="sk-arrow" viewBox="0 0 90 60">
+          <path d="M8 8 C 30 18, 54 28, 78 44" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M68 38 L 80 46 L 70 52" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span class="sk-text">weekly podium</span>
+      </span>
+    </article>
+
+  </div>
+</section>
+
+<!-- ============== SCIENCE ============== -->
+<section id="science" class="science">
+  <header class="section-head" data-reveal="up">
+    <span class="eyebrow">Backed by behavioural science</span>
+    <h3>Built on three findings the rest of the category ignores.</h3>
+  </header>
+
+  <div class="science-grid">
+    <article class="sci-card" data-reveal="up">
+      <div class="sci-num">01</div>
+      <h4>Habits don't form in 21 days.</h4>
+      <p>A 2010 UCL study by Lally et al. found <strong>habit automaticity took a median of 66 days</strong> — with a tail out to 254. Habbby is built for the long curve.</p>
+      <cite>Lally, van Jaarsveld, Potts & Wardle — <em>European Journal of Social Psychology</em>, 2010</cite>
+    </article>
+
+    <article class="sci-card sci-card-purple" data-reveal="up" data-reveal-delay="1">
+      <div class="sci-num">02</div>
+      <h4>Variable rewards beat fixed ones.</h4>
+      <p>Skinner showed that <strong>unpredictable rewards produce more durable behaviour</strong>. Habbby's card unlocks are scheduled, but the <em>which card</em> isn't.</p>
+      <cite>Skinner — <em>Schedules of Reinforcement</em>, 1957</cite>
+    </article>
+
+    <article class="sci-card" data-reveal="up" data-reveal-delay="2">
+      <div class="sci-num">03</div>
+      <h4>Loss aversion is roughly 2×.</h4>
+      <p>Kahneman & Tversky's Prospect Theory: <strong>losing something hurts about twice as much as gaining it feels good</strong>. A cracking jar turns a 1× motivator into a 2× one.</p>
+      <cite>Kahneman & Tversky — <em>Econometrica</em>, 1979</cite>
+    </article>
+  </div>
+</section>
+
+<!-- ============== CARDS SHOWCASE ============== -->
+<section id="cards" class="cards-showcase">
+  <header class="section-head section-head-light" data-reveal="up">
+    <span class="eyebrow eyebrow-light">32+ cards & growing</span>
+    <h3>The reward you didn't know you wanted.</h3>
+    <p>Hand-painted pixel-art cards across Common, Uncommon, Rare, Epic and Legendary tiers. Every card stays sealed until you earn it — no spoilers, no peeking. The harder the milestone, the rarer the print.</p>
+  </header>
+
+  <div class="cards-rail" id="cards-rail">
+    <!-- populated by JS -->
+  </div>
+
+  <div class="card-meta">
+    <div class="meta-col">
+      <h5>Five rarity tiers</h5>
+      <p>Common · Uncommon · Rare · Epic · Legendary. The harder the milestone, the rarer the print.</p>
+    </div>
+    <div class="meta-col">
+      <h5>Drops with new milestones</h5>
+      <p>The collection grows as we ship new milestones. Day-one users see every card the moment it goes live.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============== DOWNLOAD CTA ============== -->
+<section class="download">
+  <div class="download-card" data-reveal="scale">
+    <span class="eyebrow eyebrow-light">iOS · Summer 2026</span>
+    <h3>Coming soon to the App Store.</h3>
+    <p>Habbby launches on iPhone this summer. No ads, no tracking, no paywalled core features — just the habit tracker we'd want to use ourselves.</p>
+
+    <a class="appstore-badge appstore-badge-lg" href="#" aria-label="Coming soon to the App Store">
+      <svg class="appstore-glyph"><use href="#i-apple"/></svg>
+      <span class="appstore-copy">
+        <span class="appstore-eyebrow">Coming soon to the</span>
+        <span class="appstore-store">App Store</span>
+      </span>
+    </a>
+
+    <div class="download-meta">
+      <span><svg class="ic-14"><use href="#i-apple"/></svg> Built for iPhone</span>
+      <span><svg class="ic-14"><use href="#i-lock"/></svg> No tracking · no ads</span>
+      <span><svg class="ic-14"><use href="#i-spark"/></svg> Free at launch</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============== FAQ ============== -->
+<section id="faq" class="faq">
+  <header class="section-head">
+    <span class="eyebrow">FAQ</span>
+    <h3>The honest questions.</h3>
+  </header>
+  <div class="faq-grid">
+    <details><summary>When does Habbby launch?</summary><p>Summer 2026 on the iOS App Store. We're polishing the final loops and onboarding before submitting for review.</p></details>
+    <details><summary>Will it be free?</summary><p>Yes. The free tier covers unlimited habits, jars, streaks, the full card collection, the leaderboard, and stats. A small Premium tier adds cosmetic jar skins, extra monthly streak-freezes, and smart historical-time reminders.</p></details>
+    <details><summary>What happens to my data?</summary><p>By default everything stays on your device. Cloud sync is opt-in (used only for cross-device sync and the leaderboard). No third-party ad SDKs. No behavioural tracking.</p></details>
+    <details><summary>Android?</summary><p>iOS first. We want to ship one platform really well before stretching across two. If the iOS launch goes well, Android follows.</p></details>
+    <details><summary>How many cards will there be?</summary><p>32+ cards at launch with more dropping as new milestones go live. The collection is structured across five rarity tiers and the rarest legendaries are still locked away — you'll see them when you earn them.</p></details>
+    <details><summary>Why a jar?</summary><p>Because a checkbox tells you nothing. A jar with a moving water level is a continuous, ambient progress signal that you read in under 100ms. We tried bars, rings, and grids. Jars won.</p></details>
+  </div>
+</section>
+
+<!-- ============== FOOTER ============== -->
+<footer class="footer">
+  <div class="foot-left">
+    <span class="logotype-sm">habbby</span>
+    <p>A habit tracker you'll actually keep open.</p>
+  </div>
+  <div class="foot-cols">
+    <div>
+      <h6>Product</h6>
+      <a href="#how">How it works</a>
+      <a href="#cards">Cards</a>
+      <a href="#science">The science</a>
+      <a href="#faq">FAQ</a>
+    </div>
+    <div>
+      <h6>Contact</h6>
+      <a href="mailto:hello@habbby.app">hello@habbby.app</a>
+      <a href="#">Privacy</a>
+      <a href="#">Terms</a>
+    </div>
+  </div>
+  <p class="foot-meta">© 2026 Habbby · made by humans, for humans</p>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
